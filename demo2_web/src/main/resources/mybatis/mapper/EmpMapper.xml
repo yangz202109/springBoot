@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.dao.EmpMapper">
+
+<select id="queryAll" resultMap="changeEmp">
+    SELECT e.`id`,e.`last_name`,e.`email`,e.`gender`,e.`birth`,d.did,d.dname
+    from `employee` AS e,`department` AS d
+    WHERE e.`did`=d.`did` Order by id;
+</select>
+<select id="queryById" resultMap="changeEmp">
+        SELECT e.`id`,e.`last_name`,e.`email`,e.`gender`,e.`birth`,e.did,d.dname
+        from `employee` AS e,`department` AS d
+        WHERE e.`did`=d.`did` and e.id=#{id}
+        Order by id;
+</select>
+
+<resultMap id="changeEmp" type="Employee">
+    <result column="id" property="id"/>
+    <result column="last_name" property="lastName"/>
+    <result column="email" property="email"/>
+    <result column="gender" property="gender"/>
+    <result column="birth" property="birth"/>
+    <association property="department" column="did" javaType="Department">
+        <result column="did" property="did"/>
+        <result column="dname" property="dname"/>
+    </association>
+</resultMap>
+
+
+
+<insert id="addEmp" parameterType="Employee">
+    INSERT INTO `employee`(last_name,email,gender,did,birth)
+    VALUES(#{lastName},#{email},#{gender},#{department.did},#{birth});
+</insert>
+
+<delete id="deleteEmp" >
+    DELETE from `employee` WHERE id=#{id};
+</delete>
+
+<update id="updateEmp" parameterType="Employee">
+    UPDATE `employee`
+    SET last_name=#{lastName},email=#{email},did=#{department.did},birth=#{birth}
+    WHERE id=#{id};
+</update>
+</mapper>
